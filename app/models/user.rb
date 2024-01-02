@@ -4,4 +4,5 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   validates :balance, numericality: { greater_than_or_equal_to: 0 }
+  has_many :transactions
 end
