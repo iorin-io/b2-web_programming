@@ -1,0 +1,17 @@
+<h1>Transactions#new</h1>
+<p>Find me in app/views/transactions/new.html.erb</p>
+<%= form_with(model: @transaction, url: transactions_path, local: true) do |form| %>
+  <div>
+    <%= form.label :amount, '金額' %>
+    <%= form.number_field :amount %>
+  </div>
+  <div>
+    <%= form.label :description, '説明' %>
+    <%= form.text_area :description %>
+  </div>
+  <div>
+    <%= form.label :transaction_date, '取引日' %>
+    <%= form.datetime_select :transaction_date %>
+  </div>
+  <%= form.submit '追加' %>
+<% end %>

@@ -10,16 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_02_151730) do
-  create_table "account_balances", force: :cascade do |t|
-    t.decimal "balance"
-    t.datetime "timestamp"
-    t.integer "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_account_balances_on_user_id"
-  end
-
+ActiveRecord::Schema[7.0].define(version: 2024_01_03_091100) do
   create_table "transactions", force: :cascade do |t|
     t.decimal "amount"
     t.text "description"
@@ -27,6 +18,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_02_151730) do
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "balance"
     t.index ["user_id"], name: "index_transactions_on_user_id"
   end
 
@@ -38,10 +30,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_02_151730) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "current_balance"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "account_balances", "users"
   add_foreign_key "transactions", "users"
 end

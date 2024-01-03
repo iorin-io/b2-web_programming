@@ -2,3 +2,28 @@
 <p>ようこそ、<%= current_user.email %>さん！</p>
 
 <%= link_to 'ログアウト', destroy_user_session_path, method: :delete %>
+
+<div id="balance_chart" style="width: 900px; height: 500px;"></div>
+
+<%= link_to '取引を登録する', new_transaction_path %>
+
+<script>
+  google.charts.load('current', {'packages':['corechart']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+      ['Date', 'Balance'],
+      // ここにデータを挿入
+    ]);
+
+    var options = {
+      title: 'Balance Over Time',
+      curveType: 'function',
+      legend: { position: 'bottom' }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('balance_chart'));
+    chart.draw(data, options);
+  }
+</script>
