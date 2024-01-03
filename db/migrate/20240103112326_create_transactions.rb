@@ -5,6 +5,7 @@ class CreateTransactions < ActiveRecord::Migration[7.0]
       t.text :description
       t.datetime :transaction_date
       t.references :user, null: false, foreign_key: true
+      t.decimal :after_balance
 
       t.timestamps
     end
