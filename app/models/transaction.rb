@@ -1,6 +1,6 @@
 class Transaction < ApplicationRecord
   belongs_to :user
-  validates :amount, presence: true, numericality: { greater_than: 0 }
+  validates :amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :description, presence: true
   after_save :update_user_balance
 
