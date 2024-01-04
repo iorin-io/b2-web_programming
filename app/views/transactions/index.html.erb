@@ -1,12 +1,12 @@
-<h1>取引履歴</h1>
-
+<div class='content'>
+  <h2>履歴</h2>
 <table>
   <thead>
     <tr>
-      <th>取引タイプ</th>
-      <th>金額</th>
-      <th>説明</th>
-      <th>取引日</th>
+      <th class='transaction_type'>取引タイプ</th>
+      <th class='amount'>金額</th>
+      <th class='description'>説明</th>
+      <th class='transaction_date'>取引日</th>
 
     </tr>
   </thead>
@@ -14,10 +14,11 @@
     <% @transactions.each do |transaction| %>
       <tr>
         <td><%= transaction.transaction_type == 'payment' ? '支払い' : '入金' %></td>
-        <td><%= transaction.amount %></td>
+        <td><%= number_to_currency(transaction.amount, unit: '', precision: 0) %>円</td>
         <td><%= transaction.description %></td>
-        <td><%= transaction.transaction_date %></td>
+        <td><%= transaction.transaction_date.strftime("%Y-%m-%d %H:%M:%S") %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
+</div>

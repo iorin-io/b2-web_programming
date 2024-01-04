@@ -1,4 +1,4 @@
-<h1>Transactions#new</h1>
+<div class='content'>
 <% if @transaction.errors.any? %>
   <div id="error_explanation">
     <h2><%= pluralize(@transaction.errors.count, "error") %> prohibited this transaction from being saved:</h2>
@@ -18,7 +18,7 @@
   </div>
   <div>
     <%= form.label :amount, '金額' %>
-    <%= form.number_field :amount %>
+    <%= form.number_field :amount, min: 1 %>
   </div>
   <div>
     <%= form.label :description, '説明' %>
@@ -26,7 +26,10 @@
   </div>
   <div>
     <%= form.label :transaction_date, '取引日' %>
-    <%= form.datetime_select :transaction_date %>
+    <div class='transaction_date-field'>
+      <%= form.datetime_select :transaction_date %>
+    </div>
   </div>
   <%= form.submit '追加' %>
 <% end %>
+</div>

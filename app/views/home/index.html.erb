@@ -1,38 +1,30 @@
-<h1>Home#index</h1>
-<p>ようこそ、<%= current_user.email %>さん！</p>
+<div class='content'>
+  <p>ようこそ、<%= current_user.email %>さん！</p>
+  <p>現在の残高: <%= number_to_currency(current_user.current_balance, unit: '', precision: 0) %> 円</p>
 
-<p>現在の残高: <%= current_user.current_balance %> 円</p>
+  <div id="balance_chart" style="width: 70dvw; height: 50dvh;"></div>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
 
-<div id="balance_chart" style="width: 900px; height: 500px;"></div>
+    function drawChart() {
+      var data = google.visualization.arrayToDataTable([
+        ['日付', '残高'],
+        <% current_user.transactions.each do |transaction| %>
+          ['<%= transaction.created_at.strftime("%Y-%m-%d") %>', <%= transaction.after_balance %>],
+        <% end %>
+      ]);
 
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript">
-  google.charts.load('current', {'packages':['corechart']});
-  google.charts.setOnLoadCallback(drawChart);
+      var options = {
+        title: '残高の推移',
+        pointSize:8,
+        legend: { position: 'bottom' }
+      };
 
-  function drawChart() {
-    var data = google.visualization.arrayToDataTable([
-      ['日付', '残高'],
-      <% current_user.transactions.each do |transaction| %>
-        ['<%= transaction.created_at.strftime("%Y-%m-%d") %>', <%= transaction.after_balance %>],
-      <% end %>
-    ]);
+      var chart = new google.visualization.LineChart(document.getElementById('balance_chart'));
 
-    var options = {
-      title: '残高の推移',
-      curveType: 'function',
-      legend: { position: 'bottom' }
-    };
-
-    var chart = new google.visualization.LineChart(document.getElementById('balance_chart'));
-
-    chart.draw(data, options);
-  }
-</script>
-
-<%= link_to 'ログアウト', destroy_user_session_path, method: :delete %>
-
-<%= link_to '取引を登録する', new_transaction_path %>
-
-<%= link_to '取引履歴を見る', transactions_path %>
-
+      chart.draw(data, options)
+    }
+  </script>
+</div>

@@ -23,7 +23,7 @@
 
   <div class="field">
     <%= f.label :current_balance, "残高登録" %><br />
-    <%= f.number_field :current_balance %>
+    <%= f.number_field :current_balance, min: 0 %>
   </div>
 
 
