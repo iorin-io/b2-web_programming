@@ -3,12 +3,6 @@
 
 <p>現在の残高: <%= current_user.current_balance %> 円</p>
 
-<%= link_to 'ログアウト', destroy_user_session_path, method: :delete %>
-
-<%= link_to '取引を登録する', new_transaction_path %>
-
-<%= link_to '取引履歴を見る', transactions_path %>
-
 <div id="balance_chart" style="width: 900px; height: 500px;"></div>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -35,3 +29,10 @@
     chart.draw(data, options);
   }
 </script>
+
+<%= link_to 'ログアウト', destroy_user_session_path, method: :delete %>
+
+<%= link_to '取引を登録する', new_transaction_path %>
+
+<%= link_to '取引履歴を見る', transactions_path %>
+
