@@ -275,19 +275,18 @@ new_balance = transaction_type == 'payment' ? user.current_balance - amount : us
             特にRubyの「全てはオブジェクトである」という考え方が面白いと感じた。
         }
     >
-    +section{参考文献}<
+    +section{参照URL}<
         +p{
             \listing{
                 * Rails ガイド Active Record コールバック
-                  (https://railsguides.jp/active_record_callbacks.html)
-                * rails devise完全入門！結局deviseって何ができるの？
-                  (https://www.sejuku.net/blog/13378)
-                * deviseのユーザー登録機能を拡張する (https://qiita.com/krile136/items/e04181bb9e9dc0f37a79)
-                * Rails deviseの導入とView + Controllerのカスタマイズ(sign_in/out後のpath指定など) (https://qiita.com/mmmasuke/items/7d5c47b4a40f6912adf2)
-                * deviseを使ってユーザー管理機能を実装 (https://qiita.com/mr0216/items/54bc1c5f9e673c8eaa84)
-                * 【Google Charts】マーカー付き折れ線グラフ(https://gldegg.com/google-charts_line_pointsize/)
-                * [Rails]CSSファイルの適用について(https://qiita.com/john-tarou/items/2eb178db48b3764cb847)
-                * Railsアプリのデプロイ方法について（手動編）(https://qiita.com/Tatsu88/items/7030fd72d0ba714917fe)
+                \listing{* https://railsguides.jp/active_record_callbacks.html}
+                * rails devise完全入門！結局deviseって何ができるの？ \listing{* https://www.sejuku.net/blog/13378}
+                * deviseのユーザー登録機能を拡張する \listing{* https://qiita.com/krile136/items/e04181bb9e9dc0f37a79}
+                * Rails deviseの導入とView + Controllerのカスタマイズ(sign_in/out後のpath指定など) \listing{* https://qiita.com/mmmasuke/items/7d5c47b4a40f6912adf2}
+                * deviseを使ってユーザー管理機能を実装 \listing{* https://qiita.com/mr0216/items/54bc1c5f9e673c8eaa84}
+                * 【Google Charts】マーカー付き折れ線グラフ \listing{* https://gldegg.com/google-charts_line_pointsize/}
+                * [Rails]CSSファイルの適用について \listing{* https://qiita.com/john-tarou/items/2eb178db48b3764cb847}
+                * Railsアプリのデプロイ方法について（手動編）\listing{* https://qiita.com/Tatsu88/items/7030fd72d0ba714917fe}
             }
         }
     >
