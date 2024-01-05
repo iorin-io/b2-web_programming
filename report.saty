@@ -6,14 +6,28 @@
 @require: code-printer/code-theme
 @require: image/image
 @require: latexcmds/latexcmds
+@require: fss/fss
+@require: fss/fonts
+@require: fss/style
+
 
 ClassReport.document {|Webプログラミング期末レポート|} {|202210016 髙𣘺伊織|} '<
-    +section{金銭管理Webアプリ Manay} <
+        +p{
+            \font-style[font-size 24pt]{
+                \font-style[bold]{
+                    金銭管理WebアプリケーションManay
+                }
+            }
+        }
         +section{概要} <
             +p{Manayは、普段の金銭管理を簡単に行うことができるWebアプリである。}
             +p{
                 このアプリケーションでは、ユーザが自分の収入と支出を追跡・管理することができる。
                 簡単な操作を通して、入出金の登録・履歴の閲覧・残高の推移の確認が行える。
+            }
+            +p{
+                このアプリケーションは、以下のURLからアクセスできる。
+                http://20.243.83.92:3000/
             }
         >
         +section{特徴と工夫した点}<
@@ -21,6 +35,74 @@ ClassReport.document {|Webプログラミング期末レポート|} {|202210016 
                 +p{
                     今回のアプリケーションでは、開発をより簡単・効率化するため、Ruby on Railsというフレームワークを使用した。
                     MVCモデルを利用することで、頭の中を整理しながらコーディングをすることができた。
+                }
+            >
+            +section{モデル}<
+                +p{
+                    このアプリケーションでは、以下のようにモデルを定義した。
+                    \listing{
+                        * User
+                        \listing{
+                            * email:string
+                            * encrypted_password:string
+                            * current_balance:decimal
+                        }
+                        * Transaction
+                        \listing{
+                            * user_id:integer
+                            * amount:decimal
+                            * transaction_type:string
+                            * created_at:datetime
+                            * after_balance:decimal
+                        }
+
+                    }
+
+                }
+                +p{}
+                +p{
+                    ここで、balance（残高）属性がUser/Transactionのどちらにもあることに疑問を持つかもしれない。
+                }
+                +p{
+                    これは、以下の機能を実装するためである。
+                    \listing{
+                        * 現在の残高を表示する
+                        * これまでの残高の推移をグラフで表示する
+                    }
+                }
+                +p{}
+                +p{
+                    current_balanceのみ存在する場合は、1ユーザにつき1つの残高しか持てないため、
+                    残高の推移をグラフで表示することができない。
+                    また、after_balanceのみ存在する場合は、
+                    残高を表示するために全てのTransactionを走査し、計算する必要がある。
+                }
+                +p{
+                    そのため、どちらのモデルにも現在の残高を保持する実装をすることにした。
+                    以下は、\inline-code(`app/models/transaction.rb`);のコードの一部である。
+                }
+                +code-printer ?:(
+                    CodePrinter.make-config CodeSyntax.ruby CodeTheme.tokyo-night
+                )(`class Transaction < ApplicationRecord
+  # 省略
+  after_save :update_user_balance
+
+  private
+
+  def update_user_balance
+
+    #省略
+
+    new_balance = transaction_type == 'payment' ? user.current_balance - amount : user.current_balance + amount
+    user.update(current_balance: new_balance)
+    update_columns(after_balance: new_balance)
+  end
+
+end
+                `);
+                +p{
+                    \inline-code(`after_save`);コールバックを使用し、transactionによって増減したbalanceを、\inline-code(`current_balance`);・\inline-code(`after_balance`);の両方に格納している。
+                    これにより、上記要件が実装できた。
                 }
             >
             +section{アカウント作成/ログイン}<
@@ -35,22 +117,140 @@ ClassReport.document {|Webプログラミング期末レポート|} {|202210016 
                 }
                 +file-printer ?:(
                     CodePrinter.make-config CodeSyntax.ruby CodeTheme.tokyo-night
-                )(`application_controller.rb`);
-            >
-            +section{モデル}<
+                )(`app/controllers/application_controller.rb`);
                 +p{
-                    このアプリケーションでは、以下のようにモデルを定義した。
-                }
-                +p{
+                    また、アカウント作成時に現在所持している金額を入力する機能を実装した。
+                    これは、以下の2点を狙ったものである。
                     \listing{
-                        * User
-                        \listing{
-                            * email:string
-                            * encrypted_password:string
-                            * current_balance:
-                        }
+                        * アカウント作成時に\inline-code(`after_balance`);にデータを入れることで、トップページの折れ線グラフでレンダリングエラーを発生させない
+                        * 現在の所持金を、入出金取引と同様に登録するのは直観的ではない
                     }
                 }
+                +p{}
+                +p{
+                    \inline-code(`current_balance`);の初期登録は\inline-code(`app/views/devise/registrations/new.html.erb`);によって実装されている。
+                }
+                +code-printer ?:(
+                    CodePrinter.make-config CodeSyntax.ruby CodeTheme.tokyo-night
+                )(`# 省略
+<div class="field">
+  <%= f.label :current_balance, "残高登録" %>
+  <%= f.number_field :current_balance, min: 0 %>
+</div>
+# 省略`);
+                +p{
+                    また、\inline-code(`after_balance`);の初期登録は\inline-code(`app/controllers/transactions_controller.rb`);によって実装されている。
+                }
+                +code-printer ?:(
+                    CodePrinter.make-config CodeSyntax.ruby CodeTheme.tokyo-night
+                )(`# 省略
+	def create
+	  super do |user|
+		if user.persisted?
+		  initial_balance = params[:user][:current_balance].to_f
+		  user.transactions.create(amount: initial_balance, description: "初期登録", transaction_date: Time.current, after_balance: initial_balance)
+		end
+	  end
+	end
+# 省略`);
+                +p{
+                    この時、\inline-code(`after_balance`);の登録より前に\inline-code(`current_balance`);の登録が行われるため、例外処理を行う必要があった。
+                    以下は\inline-code(`app/models/tranaction.rb`);での例外処理の内容である。
+                }
+                +code-printer ?:(
+                    CodePrinter.make-config CodeSyntax.ruby CodeTheme.tokyo-night
+                )(`# 省略
+  def update_user_balance
+
+    return if description == '初期登録'
+
+    new_balance = transaction_type == 'payment' ? user.current_balance - amount : user.current_balance + amount
+# 省略`);
+
+            >
+            +section{入出金処理}<
+                +p{
+                    このアプリケーションでは、入出金処理を行うために、Transactionモデルを用いた。
+                    以下は、\inline-code(`app/controllers/transactions_controller.rb`);のコードの一部である。
+                }
+                +code-printer ?:(
+                    CodePrinter.make-config CodeSyntax.ruby CodeTheme.tokyo-night
+                )(`# 省略
+  def new
+    @transaction = Transaction.new
+  end
+
+  def create
+    @transaction = current_user.transactions.new(transaction_params)
+    if @transaction.save
+      redirect_to root_path
+    else
+      # 失敗時の処理
+      Rails.logger.debug @transaction.errors.full_messages
+      render :new
+    end
+  end
+
+  private
+
+  def transaction_params
+    params.require(:transaction).permit(:amount, :description, "transaction_date(1i)", "transaction_date(2i)", "transaction_date(3i)", "transaction_date(4i)", "transaction_date(5i)", :transaction_type)
+  end
+# 省略`);
+                +p{
+                    この時、入金と支払いを正負の数で入力するシステムは、ユーザーフレンドリーではないと考えた。
+                    そのため、入金と支払いを区別するために、\inline-code(`transaction_type`);属性を用いた。
+                    この属性では、\inline-code(`payment`);と\inline-code(`deposit`);の2つの値を取る。
+                    erbファイルでは、チェックボックスで選択してもらい、\inline-code(`after_balance`);の計算は以下のように場合わけを行なった。
+                }
+                +code-printer ?:(
+                    CodePrinter.make-config CodeSyntax.ruby CodeTheme.tokyo-night
+                )(`# 省略
+new_balance = transaction_type == 'payment' ? user.current_balance - amount : user.current_balance + amount
+# 省略`);
+                +p{
+                    \inline-code(`app/views/transactions/new.html.erb`);で実装した画面が以下である。
+                }
+                +centering{\include-image(`image/transaction.jpg`);}
+            >
+            +section{残高推移グラフ}<
+                +p{
+                    このアプリケーションでは、残高の推移をグラフで表示する機能を実装した。
+                    以下は、\inline-code(`app/controllers/home_controller.rb`);のコードの一部である。
+                }
+                +code-printer ?:(
+                    CodePrinter.make-config CodeSyntax.ruby CodeTheme.tokyo-night
+                )(`# 省略
+  <div id="balance_chart" style="width: 70dvw; height: 50dvh;"></div>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      var data = google.visualization.arrayToDataTable([
+        ['日付', '残高'],
+        <% current_user.transactions.each do |transaction| %>
+          ['<%= transaction.created_at.strftime("%Y-%m-%d") %>', <%= transaction.after_balance %>],
+        <% end %>
+      ]);
+
+      var options = {
+        title: '残高の推移',
+        pointSize:8,
+        legend: { position: 'bottom' }
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('balance_chart'));
+
+      chart.draw(data, options)
+    }
+  </script>
+# 省略`);
+                +p{
+                    これによって、グラフを表示することができた。実際の例は以下の通りである。
+                }
+                +centering{\include-image(`image/graph.jpg`);}
             >
 
 
@@ -78,5 +278,4 @@ ClassReport.document {|Webプログラミング期末レポート|} {|202210016 
                 Primのアルゴリズムは頂点をベースに木を構築していくのに対し、Kruskalのアルゴリズムは辺をベースに木を構築していく。}
             >
         >
-    >
 >
