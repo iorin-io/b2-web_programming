@@ -3,8 +3,8 @@
     <%= link_to 'Manay', root_path, class: 'title' %>
     <% if user_signed_in? %>
       <div class='links'>
-        <%= link_to '取引履歴', transactions_path %>
-        <%= link_to '取引を登録する', new_transaction_path %>
+        <%= link_to '入出金履歴', transactions_path %>
+        <%= link_to '入出金を登録する', new_transaction_path %>
         <%= link_to 'ログアウト', destroy_user_session_path, method: :delete %>
       </div>
     <% end %>
