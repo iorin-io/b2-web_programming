@@ -1,0 +1,82 @@
+@import: report
+@require: azmath/azmath
+@require: itemize
+@require: code-printer/code-printer
+@require: code-printer/code-syntax
+@require: code-printer/code-theme
+@require: image/image
+@require: latexcmds/latexcmds
+
+ClassReport.document {|Webプログラミング期末レポート|} {|202210016 髙𣘺伊織|} '<
+    +section{金銭管理Webアプリ Manay} <
+        +section{概要} <
+            +p{Manayは、普段の金銭管理を簡単に行うことができるWebアプリである。}
+            +p{
+                このアプリケーションでは、ユーザが自分の収入と支出を追跡・管理することができる。
+                簡単な操作を通して、入出金の登録・履歴の閲覧・残高の推移の確認が行える。
+            }
+        >
+        +section{特徴と工夫した点}<
+            +section{フレームワーク}<
+                +p{
+                    今回のアプリケーションでは、開発をより簡単・効率化するため、Ruby on Railsというフレームワークを使用した。
+                    MVCモデルを利用することで、頭の中を整理しながらコーディングをすることができた。
+                }
+            >
+            +section{アカウント作成/ログイン}<
+                +p{
+                    このアプリケーションは、ユーザごとにサービスを提供する必要があった。
+                    今回は、deviseというgemを使用した。
+                    deviseを用いることで、ユーザ登録・認証系の機能を簡単に実装することができた。
+                }
+                +p{
+                    特に、\inline-code(`app/conrollers/application_controller.rb`);に以下のコードを追加することで、
+                    アプリケーションにおける全てのアクションに対して、ログイン状態を要求することができた。
+                }
+                +file-printer ?:(
+                    CodePrinter.make-config CodeSyntax.ruby CodeTheme.tokyo-night
+                )(`application_controller.rb`);
+            >
+            +section{モデル}<
+                +p{
+                    このアプリケーションでは、以下のようにモデルを定義した。
+                }
+                +p{
+                    \listing{
+                        * User
+                        \listing{
+                            * email:string
+                            * encrypted_password:string
+                            * current_balance:
+                        }
+                    }
+                }
+            >
+
+
+
+
+
+
+
+
+
+
+
+
+            +section{2つのアルゴリズムの違い}<
+                                +p{
+                    アルゴリズムの手順は以下の通りである。
+                    \listing{
+                        * 全ての辺を重みの昇順にソートする
+                        * 重みの小さい辺から順に、その辺で接続されている2つの頂点が同じ木に属していない場合（閉路を形成しない場合）、その辺を最小全域木に加える
+                        * 全ての頂点が最小全域木に含まれるまで、2番目の操作を繰り返す
+                    }
+
+                }
+                +p{2つのアルゴリズムの主な違いは、最小全域木を選ぶ基準にある。
+                Primのアルゴリズムは頂点をベースに木を構築していくのに対し、Kruskalのアルゴリズムは辺をベースに木を構築していく。}
+            >
+        >
+    >
+>
