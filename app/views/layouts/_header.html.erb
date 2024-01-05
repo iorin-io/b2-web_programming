@@ -1,10 +1,12 @@
 <header>
   <nav>
     <%= link_to 'Manay', root_path, class: 'title' %>
-    <div class='links'>
-      <%= link_to '取引履歴', transactions_path %>
-      <%= link_to '取引を登録する', new_transaction_path %>
-      <%= link_to 'ログアウト', destroy_user_session_path, method: :delete %>
-    </div>
+    <% if user_signed_in? %>
+      <div class='links'>
+        <%= link_to '取引履歴', transactions_path %>
+        <%= link_to '取引を登録する', new_transaction_path %>
+        <%= link_to 'ログアウト', destroy_user_session_path, method: :delete %>
+      </div>
+    <% end %>
   </nav>
 </header>
